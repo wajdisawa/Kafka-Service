@@ -23,6 +23,7 @@ To stop the service
 ```
 make stop
 ```
+You can also use `helm_deploy` to deploy the full service, or let your pipeline call this to deploy the service and create the namespace.
 
 ## Kafka Server Properties
 Configuration can be found under `conf` folder, you can change it, or add new.

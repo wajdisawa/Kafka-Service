@@ -21,8 +21,8 @@ helm_deploy: ## use helm to deploy the services
 	helm repo add bitnami https://charts.bitnami.com/bitnami
 	helm repo add lensesio https://lensesio.github.io/kafka-helm-charts/
 	helm repo update
-	helm upgrade --install -f helm/kafka/values.yaml kafka-service bitnami/kafka --version 7.2.5 --namespace kafka-services
-	helm upgrade --install -f helm/lenses/values.yaml kafka-lenses lensesio/lenses --set name=lenses --version 3.0.9 --namespace kafka-services
+	helm upgrade --install -f helm/kafka/values.yaml kafka-service bitnami/kafka --namespace kafka-services
+	helm upgrade --install -f helm/lenses/values.yaml kafka-lenses lensesio/lenses --set name=lenses --namespace kafka-services
 
 .PHONY: help
 help: ## Help
