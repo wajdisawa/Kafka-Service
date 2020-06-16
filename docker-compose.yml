@@ -1,0 +1,50 @@
+version: '3.7'
+
+networks:
+    kafka-net:
+        name: 'kafka-net'
+        driver: bridge
+
+services:
+    zookeeper:
+        image: 'bitnami/zookeeper:latest'
+        networks:
+            - kafka-net
+        ports:
+            - '2181:2181'
+        environment:
+            - ALLOW_ANONYMOUS_LOGIN=yes
+        volumes:
+            - ./data/zookeeper:/bitnami/zookeeper/data
+    kafka:
+        image: 'bitnami/kafka:latest'
+        networks:
+            - kafka-net
+        ports:
+            - 9092
+        environment:
+            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+            - ALLOW_PLAINTEXT_LISTENER=yes
+        volumes:
+            - ./data/kafka:/bitnami/kafka/data
+            - ./conf/server.properties:/opt/bitnami/kafka/conf/server.properties
+        depends_on:
+            - zookeeper
+    lenses:
+        image: lensesio/lenses:latest
+        networks:
+            - kafka-net
+        environment:
+            LENSES_PORT: 9991
+            LENSES_KAFKA_BROKERS: "PLAINTEXT://kafka:9092"
+            LENSES_ZOOKEEPER_HOSTS: |
+                [
+                  {url:"zookeeper:2181"},
+                ]
+            LENSES_SECURITY_USER: admin
+            LENSES_SECURITY_PASSWORD: admin
+        ports:
+            - 9991:9991
+            - 9102:9102
+        volumes:
+            - ./etc/license.json:/license.json

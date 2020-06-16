@@ -1,0 +1,73 @@
+image:
+    repository: landoop/lenses
+    pullPolicy: Always
+
+
+replicaCount: 1
+rbacEnable: false
+
+resources:
+    limits:
+        memory: 5Gi
+    requests:
+        memory: 4Gi
+
+persistence:
+    enabled: false
+    accessModes:
+        - ReadWriteOnce
+    size: 5Gi
+    # our storage
+    existingClaim: false
+ingress:
+    enabled: true
+    host: YOUR_HOST
+    annotations:
+        kubernetes.io/tls-acme: "true"
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/rewrite-target: /
+    tls:
+        enabled: true
+        secretName: YOUR_NAME
+
+lenses:
+    kafka:
+        ssl:
+            enabled: false
+            keyPassword: ""
+            keyStorePassword: ""
+            trustStorePassword: ""
+        sasl:
+            enabled: false
+        bootstrapServers:
+            -   name: kafka-service-headless
+                port: 9092
+    zookeepers:
+        enabled: false
+        chroot:
+        hosts:
+            -   host: kafka-service-zookeeper-headless
+                port: 2181
+    topics:
+        # we can have a suffix for the topics and that can be managed by lenses
+        suffix:
+    licenseUrl: "YOUR LENSES LICENSE LINK"
+    configOverrides: {}
+    sql:
+        ssl:
+            trustStorePassword: ""
+            keyStorePassword: ""
+            keyPassword: ""
+    schemaRegistries:
+        enabled: false
+        security:
+            password: ""
+env:
+    LENSES_PORT: 9991
+    LENSES_KAFKA_BROKERS: "PLAINTEXT://kafka-service:9092"
+    LENSES_ZOOKEEPER_HOSTS: |
+        [
+          {url:"kafka-service-zookeeper-headless:2181"},
+        ]
+    LENSES_SECURITY_USER: admin
+    LENSES_SECURITY_PASSWORD: admin

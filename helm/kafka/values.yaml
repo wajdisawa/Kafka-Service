@@ -1,0 +1,57 @@
+image:
+    registry: docker.io
+    repository: bitnami/kafka
+    tag: 2.4.0-debian-10-r0
+    pullPolicy: Always
+    debug: false
+
+updateStrategy: RollingUpdate
+rollingUpdatePartition: 0
+podDisruptionBudget:
+    maxUnavailable: 1
+
+replicaCount: 1
+
+config: |-
+  allowPlaintextListener=true
+  brokerId=-1
+  deleteTopicEnable=true
+  logRetentionHours=168
+  logsDirs=/bitnami/kafka/data
+  defaultReplicationFactor=1
+  offsetsTopicReplicationFactor=1
+  transactionStateLogReplicationFactor=1
+  transactionStateLogMinIsr=1
+  zookeeper.connect=kafka-service-zookeeper-headless
+  zookeeperConnectionTimeoutMs=6000
+auth:
+    ## Switch to enable the kafka authentication.
+    enabled: false
+
+persistence:
+    enabled: true
+    accessModes:
+        - ReadWriteOnce
+    size: 8Gi
+    annotations: {}
+
+nodeSelector: {}
+resources:
+    limits:
+        cpu: 250m
+        memory: 5Gi
+    requests:
+        memory: 4Gi
+        cpu: 200m
+
+metrics:
+    ## Prometheus Kafka Exporter: can be used with JMX Exporter
+    kafka:
+        enabled: false
+
+zookeeper:
+    enabled: true
+
+env:
+    KAFKA_CFG_ZOOKEEPER_CONNECT: kafka-service-zookeeper-headless:2181
+    ALLOW_PLAINTEXT_LISTENER: yes
